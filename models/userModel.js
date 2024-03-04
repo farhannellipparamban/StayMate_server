@@ -26,10 +26,27 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    walletHistory: [
+      {
+        date: {
+          type: Date,
+        },
+        amount: {
+          type: Number,
+        },
+        description: {
+          type: String,
+        },
+      },
+    ],
+    wallet: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("user", userSchema);

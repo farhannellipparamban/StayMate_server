@@ -1,6 +1,6 @@
 import User from "../models/userModel.js";
 import Rooms from "../models/roomModel.js";
-import Bookings from "../models/bookingModel.js";
+// import Bookings from "../models/bookingModel.js";
 import securePassword from "../utils/securePassword.js";
 import sendMailOtp from "../utils/nodeMailer.js";
 import Otp from "../models/otpModel.js";
@@ -310,6 +310,16 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+export const getUserDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userData = await User.findOne({ _id: id });
+    res.status(200).json({ userData });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal Server Error." });
+  }
+};
 export const updateProfile = async (req, res) => {
   try {
     const { email, name, mobile } = req.body.values;
@@ -360,85 +370,3 @@ export const allRoomList = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-export const roomBooking = async (req, res) => {
-  try {
-    const { _id, totalAmount, ownerId, startDate, endDate, userId } = req.body;
-    const booking = new Bookings({
-      user: userId,
-      owner: ownerId,
-      room: _id,
-      totalBookingRent: totalAmount,
-      startDate,
-      endDate,
-    });
-    const bookingData = await booking.save();
-    const roomDetails = await Rooms.findByIdAndUpdate(
-      { _id: _id },
-      {
-        $push: {
-          bookingDates: {
-            startDate: startDate,
-            endDate: endDate,
-          },
-        },
-      },
-      { new: true }
-    );
-    res
-      .status(200)
-      .json({ message: "Your booking Successfully Completed", roomDetails });
-  } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-export const myBookings = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const bookingList = await Bookings.find({ user: userId })
-      .populate("room")
-      .populate("owner")
-      .sort({ createdAt: -1 });
-    res.status(200).json({ bookingList });
-  } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ message: "Internal Sever Error" });
-  }
-};
-
-// export const filteredRooms = async (req, res) => {
-//   try {
-//     const { CheckInDate, CheckOutDate } = req.body;
-//     const Rooms = [
-//       { id: 1, bookingDates: [{ startDate: new Date(), endDate: new Date() }] },
-//       { id: 2, bookingDates: [] },
-//     ];
-
-//     const filteredRoom = await Rooms.filter((room) => {
-//       const bookingDates = room.bookingDates;
-//       if (!bookingDates || bookingDates.length === 0) {
-//         return true;
-//       }
-//       const checkIn = new Date(CheckInDate).getTime();
-//       const checkOut = new Date(CheckOutDate).getTime();
-//       for (const booking of bookingDates) {
-//         const startDate = booking.startDate.getTime();
-//         const endDate = booking.endDate.getTime();
-
-//         if (
-//           (checkIn >= startDate && checkIn < endDate) ||
-//           (checkOut > startDate && checkOut <= endDate)
-//         ) {
-//           return false;
-//         }
-//       }
-//       return true;
-//     });
-//     res.status(200).json({ rooms: filteredRoom });
-//   } catch (error) {
-//     console.log(error.message);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-// };

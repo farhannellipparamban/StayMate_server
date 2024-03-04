@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 import Owner from "../models/ownerModel.js";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 const userSecret = process.env.USER_SECRET;
 const ownerSecret = process.env.OWNER_SECRET;
@@ -35,7 +35,7 @@ export const userTokenVerify = async (req, res, next) => {
   }
 };
 
-export const ownerTokenVerify = async (req, res,next) => {
+export const ownerTokenVerify = async (req, res, next) => {
   try {
     let token = req.headers.autherization;
     if (!token) {
@@ -50,8 +50,8 @@ export const ownerTokenVerify = async (req, res,next) => {
       const owner = await Owner.findOne({ email: verified.email });
       if (owner.isBlocked) {
         return res.status(403).json({ message: "Owner Is Blocked" });
-      }else{
-        next()
+      } else {
+        next();
       }
     } else {
       return res.status(403).json({ message: "Access Denied" });

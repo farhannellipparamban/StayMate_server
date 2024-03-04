@@ -1,10 +1,9 @@
 import Owner from "../models/ownerModel.js";
 import Customers from "../models/userModel.js";
-import Room from "../models/roomModel.js";
 import Otp from "../models/otpModel.js";
+// import Bookings from "../models/bookingModel.js";
 import securePassword from "../utils/securePassword.js";
 import sendMailOtp from "../utils/nodeMailer.js";
-import cloudinary from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
@@ -251,7 +250,7 @@ export const ownerForgetPassword = async (req, res) => {
         </head>
         <body>
         <div style='border-bottom:1px solid #eee'>
-      <a href='' style='font-size:1.4em;color: #f30d0d;text-decoration:none;font-weight:600'>Book<a style='color: #f30d0d;'></a>breeze</a>
+      <a href='' style='font-size:1.4em;color: #f30d0d;text-decoration:none;font-weight:600'>Stay<a style='color: #f30d0d;'></a>Mate</a>
       </div>
           <div class="container">
             <h1>You have requested to reset your password</h1>
@@ -330,201 +329,7 @@ export const updateOwnerProfile = async (req, res) => {
   }
 };
 
-export const addRoom = async (req, res) => {
-  try {
-    const {
-      ownerId,
-      roomName,
-      rent,
-      mobile,
-      description,
-      location,
-      roomImage,
-      roomType,
-      acType,
-      model,
-    } = req.body;
 
-    const uploadPromises = roomImage.map((image) => {
-      return cloudinary.uploader.upload(image, { folder: "RoomImages" });
-    });
-    const uploadImages = await Promise.all(uploadPromises);
-    let roomImages = uploadImages.map((image) => image.secure_url);
-    await Room.create({
-      ownerId,
-      roomName,
-      description,
-      location,
-      mobile,
-      rent,
-      roomType,
-      roomImages,
-      acType,
-      model,
-    });
-    res.status(201).json({ message: "Room added Successfully " });
-  } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-export const RoomListDetails = async (req, res) => {
-  try {
-    const { ownerId } = req.params;
-    const rooms = await Room.find({ ownerId: ownerId });
-    if (rooms) {
-      return res.status(200).json({ rooms });
-    } else {
-      return res
-        .status(200)
-        .json({ message: "something happened with finding room data" });
-    }
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ status: "Internal Server Error" });
-  }
-};
-
-export const editRoomDetails = async (req, res) => {
-  try {
-    const { roomId } = req.params;
-    const room = await Room.findById(roomId);
-    if (roomId) {
-      return res.status(200).json({ room });
-    }
-    return res.status(404).json({ message: "Room not Found" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ status: "Internal Server Error" });
-  }
-};
-
-export const editRoom = async (req, res) => {
-  try {
-    const {
-      roomId,
-      roomName,
-      roomImage,
-      rent,
-      model,
-      acType,
-      description,
-      roomType,
-      mobile,
-      location,
-    } = req.body;
-
-    let existingImage = [];
-    const existingRoom = await Room.findById(roomId);
-    if (roomImage.length === 0) {
-      existingImage = existingImage.roomImages;
-    } else {
-      const uploadPromises = roomImage.map((image) => {
-        return cloudinary.uploader.upload(image, {
-          folder: "RoomImages",
-        });
-      });
-      const uploadImages = await Promise.all(uploadPromises);
-
-      if (
-        existingRoom &&
-        existingRoom.roomImages &&
-        existingRoom.roomImages.length > 0
-      ) {
-        existingImage = existingRoom.roomImages;
-      }
-
-      let roomImages = uploadImages.map((image) => image.secure_url);
-      for (let i = 0; i < roomImages.length; i++) {
-        existingImage.push(roomImages[i]);
-      }
-    }
-    await Room.findByIdAndUpdate(
-      { _id: roomId },
-      {
-        $set: {
-          roomName,
-          roomType,
-          mobile,
-          location,
-          acType,
-          model,
-          rent,
-          description,
-          roomImages: existingImage,
-        },
-      }
-    );
-    res.status(200).json({ message: "Room updated" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ status: "Internal Server Error" });
-  }
-};
-
-export const deleteRoomImage = async (req, res) => {
-  try {
-    const { imageUrl, roomId } = req.body;
-    const publicId = imageUrl.match(/\/v\d+\/(.+?)\./)[1]; // Extract public ID from URL
-
-    const deletionResult = await cloudinary.uploader.destroy(publicId, {
-      folder: "RoomImages",
-    });
-
-    if (deletionResult.result === "ok") {
-      const updatedData = await Room.findByIdAndUpdate(
-        { _id: roomId },
-        { $pull: { roomImages: imageUrl } },
-        { new: true }
-      );
-      if (!updatedData) {
-        return res.status(404).json({ message: "Room not found" });
-      }
-      return res
-        .status(200)
-        .json({ message: "Image removed successfully", updatedData });
-    } else {
-      console.error(
-        `Failed to delete image at ${imageUrl} in RoomImages from Cloudinary.`
-      );
-      return res.status(500).json({ message: "image not found in cloudinary" });
-    }
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ status: "Internal Server Error" });
-  }
-};
-
-
-export const roomBlock = async (req, res) => {
-  try {
-    const { roomId, status } = req.body;
-    const room = await Room.findById(roomId);
-
-    if (!room) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-
-    const updatedStatus = !status;
-    await Room.findByIdAndUpdate(
-      { _id: roomId },
-      { $set: { is_Blocked: updatedStatus } }
-    );
-
-    let message = "";
-    if (updatedStatus) {
-      message = "Room is Blocked.";
-    } else {
-      message = "Room is Unblocked.";
-    }
-
-    res.status(200).json({ message });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
 
 export const customersList = async (req, res) => {
   try {
@@ -563,3 +368,4 @@ export const BlockCustomer = async (req, res) => {
     res.status(500).json({ status: "Internal Server Error" });
   }
 };
+

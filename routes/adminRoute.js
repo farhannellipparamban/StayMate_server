@@ -5,6 +5,7 @@ import {
   adminLogin,
   ownerBlock,
   ownerList,
+  roomAddRequests,
   roomList,
   singleRoomDetails,
   userBlock,
@@ -19,6 +20,7 @@ adminRoute.get("/ownerList", adminTokenVerify, ownerList);
 adminRoute.patch("/blockOwner", adminTokenVerify, ownerBlock);
 adminRoute.get("/roomList",adminTokenVerify,roomList)
 adminRoute.get("/singleRoomDetails/:roomId",adminTokenVerify,singleRoomDetails)
+adminRoute.get("/roomAddRequest/:adminId", adminTokenVerify, roomAddRequests);
 adminRoute.patch('/verifyRoom',adminTokenVerify,verifyRoomDetails)
 
 export default adminRoute;
