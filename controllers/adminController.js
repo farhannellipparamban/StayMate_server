@@ -142,16 +142,9 @@ export const singleRoomDetails = async (req, res) => {
 
 export const roomAddRequests = async (req, res) => {
   try {
-    const { adminId } = req.params;
     const totalRequests = await Room.find({
       verificationStatus: "Pending",
-      admin: adminId,
-    })
-      .populate("room")
-      // .populate("owner")
-      .sort({
-        createdAt: -1,
-      });
+    }).sort({ createdAt: -1 })
     res.status(200).json({ totalRequests: totalRequests });
   } catch (error) {
     console.log(error.message);
@@ -162,6 +155,7 @@ export const roomAddRequests = async (req, res) => {
 export const verifyRoomDetails = async (req, res) => {
   try {
     const { roomId, status } = req.body;
+
     if (status === "approve") {
       const room = await Room.findByIdAndUpdate(
         { _id: roomId },
@@ -182,5 +176,3 @@ export const verifyRoomDetails = async (req, res) => {
     res.status(500).json({ status: "Internal Server Error" });
   }
 };
-
-

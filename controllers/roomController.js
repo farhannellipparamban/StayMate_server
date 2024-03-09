@@ -2,7 +2,6 @@ import Room from "../models/roomModel.js";
 import cloudinary from "../utils/cloudinary.js";
 
 export const addRoom = async (req, res) => {
-    console.log("helllo");
   try {
     const {
       ownerId,
@@ -11,12 +10,12 @@ export const addRoom = async (req, res) => {
       mobile,
       description,
       location,
-      roomImage,
+      imgAfterCrop,
       roomType,
       acType,
       model,
     } = req.body;
-    const uploadPromises = roomImage.map((image) => {
+    const uploadPromises = imgAfterCrop.map((image) => {
 
       return cloudinary.uploader.upload(image, {
         folder: "RoomImages",
@@ -36,7 +35,6 @@ export const addRoom = async (req, res) => {
       acType,
       model,
     });
-    console.log(Room);
     res.status(201).json({ message: "Room added Successfully " });
   } catch (error) {
     console.log(error.message);

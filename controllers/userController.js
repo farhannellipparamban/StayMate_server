@@ -247,7 +247,7 @@ export const forgetPassword = async (req, res) => {
         </head>
         <body>
         <div style='border-bottom:1px solid #eee'>
-      <a href='' style='font-size:1.4em;color: #f30d0d;text-decoration:none;font-weight:600'>Book<a style='color: #f30d0d;'></a>breeze</a>
+      <a href='' style='font-size:1.4em;color: #f30d0d;text-decoration:none;font-weight:600'>Stay<a style='color: #f30d0d;'></a>Mate</a>
       </div>
           <div class="container">
             <h1>You have requested to reset your password</h1>

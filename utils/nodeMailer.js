@@ -26,18 +26,18 @@ const sendMailOtp = async (name, email, userId) => {
         <div style="margin: 50px auto; width: 70%; padding: 20px 0">
           <div style="border-bottom: 1px solid #eee">
             <a href="" style="font-size: 1.4em; color: red; text-decoration: none; font-weight: 600">
-              Bookbreeze
+              StayMate
             </a>
           </div>
           <p style="font-size: 1.1em">Hi,${name}</p>
-          <p>Thank you for choosing Bookbreeze. Use the following OTP to complete your Sign Up procedures. OTP is valid for a few minutes</p>
+          <p>Thank you for choosing StayMate. Use the following OTP to complete your Sign Up procedures. OTP is valid for a few minutes</p>
           <h2 style="background: red; margin: 0 auto; width: max-content; padding: 0 10px; color: white; border-radius: 4px;">
             ${otp}
           </h2>
-          <p style="font-size: 0.9em;">Regards,<br />Bookbreeze</p>
+          <p style="font-size: 0.9em;">Regards,<br />StayMate</p>
           <hr style="border: none; border-top: 1px solid #eee" />
           <div style="float: right; padding: 8px 0; color: #aaa; font-size: 0.8em; line-height: 1; font-weight: 300">
-            <p>Bookbreeze</p>
+            <p>StayMate</p>
             <p>1600 Ocean Of Heaven</p>
             <p>Pacific</p>
           </div>

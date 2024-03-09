@@ -329,8 +329,6 @@ export const updateOwnerProfile = async (req, res) => {
   }
 };
 
-
-
 export const customersList = async (req, res) => {
   try {
     const customers = await Customers.find();
