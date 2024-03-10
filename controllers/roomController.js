@@ -14,9 +14,9 @@ export const addRoom = async (req, res) => {
       roomType,
       acType,
       model,
+      capacity,
     } = req.body;
     const uploadPromises = imgAfterCrop.map((image) => {
-
       return cloudinary.uploader.upload(image, {
         folder: "RoomImages",
       });
@@ -34,6 +34,7 @@ export const addRoom = async (req, res) => {
       roomImages,
       acType,
       model,
+      capacity,
     });
     res.status(201).json({ message: "Room added Successfully " });
   } catch (error) {

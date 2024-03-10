@@ -20,7 +20,6 @@ const roomSchema = new mongoose.Schema({
   },
   is_Available: {
     type: Boolean,
-
     default: true,
   },
   description: {
@@ -57,6 +56,10 @@ const roomSchema = new mongoose.Schema({
   verificationStatus: {
     type: String,
     default: "Pending",
+  },
+  capacity: {
+    type: Number,
+    required: true,
   },
   bookingDates: [
     {

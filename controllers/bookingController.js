@@ -136,13 +136,14 @@ export const verifyBooking = async (req, res) => {
 
 export const filteredRooms = async (req, res) => {
   try {
-    const { chooseLocation, CheckInDate, CheckOutDate } = req.body;
+    const { chooseLocation, CheckInDate, CheckOutDate,Persons } = req.body;
 
     const availableRooms = await Rooms.aggregate([
       {
         $match: {
           location: { $regex: new RegExp(chooseLocation, "i") },
           verificationStatus: "Approved",
+          capacity: { $gte: Persons } ,
         },
       },
       {
