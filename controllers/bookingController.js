@@ -5,6 +5,30 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 // import Owner from "../models/ownerModel.js";
 
+export const checkRoomAvailability = async (req, res) => {
+  try {
+    const { roomId, startDate, endDate } = req.body;
+    // Check if any bookings exist for the given room and date range
+    const existingBooking = await Bookings.findOne({
+      room: roomId,
+      $or: [
+        { startDate: { $lte: endDate }, endDate: { $gte: startDate } },
+        { startDate: { $gte: startDate, $lte: endDate } },
+      ],
+    });
+    if (existingBooking) {
+      return res
+        .status(400)
+        .json({ message: "The room is not available for the selected dates." });
+    } else {
+      return res.status(200).json({ message: "Room available" });
+    }
+  } catch (error) {
+    console.error("Error checking room availability:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const roomBooking = async (req, res) => {
   try {
     const {
@@ -17,6 +41,33 @@ export const roomBooking = async (req, res) => {
       chooseLocation,
       walletChecked,
     } = req.body;
+
+    const existingBookings = await Bookings.find({
+      room: _id,
+      $or: [
+        {
+          $and: [
+            { startDate: { $lte: endDate } },
+            { endDate: { $gte: startDate } },
+          ],
+        },
+        {
+          $and: [
+            { startDate: { $gte: startDate } },
+            { endDate: { $lte: endDate } },
+          ],
+        },
+      ],
+    });
+
+    if (existingBookings.length > 0) {
+      return res
+        .status(400)
+        .json({
+          message: "This room is already booked for the selected dates.",
+        });
+    }
+
     let method = walletChecked ? "Wallet" : "Razorpay";
 
     const booking = new Bookings({
@@ -136,14 +187,14 @@ export const verifyBooking = async (req, res) => {
 
 export const filteredRooms = async (req, res) => {
   try {
-    const { chooseLocation, CheckInDate, CheckOutDate,Persons } = req.body;
+    const { chooseLocation, CheckInDate, CheckOutDate, Persons } = req.body;
 
     const availableRooms = await Rooms.aggregate([
       {
         $match: {
           location: { $regex: new RegExp(chooseLocation, "i") },
           verificationStatus: "Approved",
-          capacity: { $gte: Persons } ,
+          capacity: { $gte: Persons },
         },
       },
       {

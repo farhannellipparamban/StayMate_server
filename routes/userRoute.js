@@ -15,6 +15,7 @@ import {
 } from "../controllers/userController.js";
 import {
   cancelBooking,
+  checkRoomAvailability,
   filteredRooms,
   myBookings,
   roomBooking,
@@ -35,6 +36,7 @@ userRoute.get("/allRooms", allRoomList);
 userRoute.post("/filterRooms", filteredRooms);
 userRoute.put("/editProfile", userTokenVerify, updateProfile);
 userRoute.get("/userDetails/:id", userTokenVerify, getUserDetails);
+userRoute.post("/checkAvailable", userTokenVerify,checkRoomAvailability);
 userRoute.post("/roomBooking", userTokenVerify, roomBooking);
 userRoute.post("/verifyPayment", userTokenVerify, verifyBooking);
 userRoute.get("/myBookings/:userId", userTokenVerify, myBookings);
