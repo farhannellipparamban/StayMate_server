@@ -5,6 +5,7 @@ import { ownerTokenVerify } from "../middleware/authVerify.js";
 import {
   BlockCustomer,
   customersList,
+  dashboardReport,
   ownerEmailVerify,
   ownerForgetPassword,
   ownerGoogleLogin,
@@ -51,5 +52,6 @@ ownerRoute.post("/cancelBooking", ownerTokenVerify, cancelBookingOwner);
 ownerRoute.patch("/changeStatus", ownerTokenVerify, changeBookingStatus);
 ownerRoute.get("/cancelRequests/:ownerId", ownerTokenVerify, cancelRequests);
 ownerRoute.patch("/approveCancel", ownerTokenVerify, apporveCancelRequest);
+ownerRoute.get("/report/:ownerId",ownerTokenVerify,dashboardReport)
 
 export default ownerRoute;

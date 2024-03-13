@@ -87,6 +87,7 @@ export const editRoom = async (req, res) => {
       roomType,
       mobile,
       location,
+      capacity,
     } = req.body;
 
     let existingImage = [];
@@ -131,6 +132,7 @@ export const editRoom = async (req, res) => {
           model,
           rent,
           description,
+          capacity,
           roomImages: existingImage,
         },
       }
