@@ -387,13 +387,14 @@ export const dashboardReport = async (req, res) => {
         $group: {
           _id: null,
           totalEarning: {
-            $sum: 1     },
+            $sum: {
+              $multiply: ["$totalBookingRent", 0.8], // 80% of totalBookingCharge
+            },
+          },
           totalBookings: { $sum: 1 }, // Counting the number of bookings
         },
       },
     ]);
-
-    console.log(totalRevenue);
 
     //current month revenue
     const currentDate = new Date();
@@ -410,7 +411,9 @@ export const dashboardReport = async (req, res) => {
         $group: {
           _id: { $month: "$createdAt" },
           monthlyEarnings: {
-            $sum: 1,
+            $sum: {
+              $multiply: ["$totalBookingRent", 0.8], // 80% of totalBookingCharge
+            },
           },
         },
       },
@@ -438,7 +441,9 @@ export const dashboardReport = async (req, res) => {
         $group: {
           _id: null,
           todayEarnings: {
-            $sum:1,
+            $sum: {
+              $multiply: ["$totalBookingRent", 0.8], // 80% of totalBookingCharge
+            },
           },
           todayBookings: { $sum: 1 }, // Counting the number of bookings
         },
@@ -460,7 +465,7 @@ export const dashboardReport = async (req, res) => {
       {
         $group: {
           _id: { $dateToString: { format: "%m", date: "$createdAt" } },
-          total: { $sum: 1},
+          total: { $sum: { $multiply: ["$totalBookingRent", 0.8] } },
           count: { $sum: 1 },
         },
       },
@@ -538,7 +543,6 @@ export const dashboardReport = async (req, res) => {
         CheckedOut: 0,
       },
     };
-    console.log(salesData);
     res.status(200).json(result);
   } catch (error) {
     console.log(error.message);

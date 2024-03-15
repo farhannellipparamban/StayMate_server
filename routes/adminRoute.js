@@ -3,6 +3,7 @@ const adminRoute = express();
 import { adminTokenVerify } from "../middleware/authVerify.js";
 import {
   adminLogin,
+  dashboardReport,
   ownerBlock,
   ownerList,
   roomAddRequests,
@@ -22,5 +23,6 @@ adminRoute.get("/roomList",adminTokenVerify,roomList)
 adminRoute.get("/singleRoomDetails/:roomId",adminTokenVerify,singleRoomDetails)
 adminRoute.get("/roomAddRequest", adminTokenVerify, roomAddRequests);
 adminRoute.patch('/verifyRoom',adminTokenVerify,verifyRoomDetails)
+adminRoute.get("/report",adminTokenVerify,dashboardReport)
 
 export default adminRoute;
