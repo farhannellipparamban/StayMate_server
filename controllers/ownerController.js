@@ -372,7 +372,6 @@ export const BlockCustomer = async (req, res) => {
 export const dashboardReport = async (req, res) => {
   try {
     const { ownerId } = req.params;
-
     // room Count
     const rooms = await Rooms.find({ ownerId: ownerId });
 
@@ -388,14 +387,13 @@ export const dashboardReport = async (req, res) => {
         $group: {
           _id: null,
           totalEarning: {
-            $sum: {
-              $multiply: ["$totalBookingCharge", 0.8], // 80% of totalBookingCharge
-            },
-          },
+            $sum: 1     },
           totalBookings: { $sum: 1 }, // Counting the number of bookings
         },
       },
     ]);
+
+    console.log(totalRevenue);
 
     //current month revenue
     const currentDate = new Date();
@@ -412,7 +410,7 @@ export const dashboardReport = async (req, res) => {
         $group: {
           _id: { $month: "$createdAt" },
           monthlyEarnings: {
-            $sum: { $multiply: ["$totalBookingCharge", 0.8] },
+            $sum: 1,
           },
         },
       },
@@ -440,7 +438,7 @@ export const dashboardReport = async (req, res) => {
         $group: {
           _id: null,
           todayEarnings: {
-            $sum: { $multiply: ["$totalBookingCharge", 0.8] },
+            $sum:1,
           },
           todayBookings: { $sum: 1 }, // Counting the number of bookings
         },
@@ -462,7 +460,7 @@ export const dashboardReport = async (req, res) => {
       {
         $group: {
           _id: { $dateToString: { format: "%m", date: "$createdAt" } },
-          total: { $sum: { $multiply: ["$totalBookingCharge", 0.8] } },
+          total: { $sum: 1},
           count: { $sum: 1 },
         },
       },
@@ -484,6 +482,7 @@ export const dashboardReport = async (req, res) => {
     }
     let salesData = [];
     for (let i = 0; i < sales.length; i++) {
+      console.log(sales[i].total);
       salesData.push(sales[i].total);
     }
 
@@ -495,13 +494,14 @@ export const dashboardReport = async (req, res) => {
           count: { $sum: 1 },
         },
       },
+
       {
         $group: {
           _id: null,
           counts: {
             $push: {
-              k: "$_id",
-              v: "$count",
+              k: { $ifNull: ["$_id", "Unknown"] }, // Handle null _id values
+              v: { $ifNull: ["$count", 0] }, // Handle null count values
             },
           },
         },
@@ -513,6 +513,7 @@ export const dashboardReport = async (req, res) => {
           },
         },
       },
+
       {
         $project: {
           Cancelled: { $ifNull: ["$Cancelled", 0] },
@@ -537,6 +538,7 @@ export const dashboardReport = async (req, res) => {
         CheckedOut: 0,
       },
     };
+    console.log(salesData);
     res.status(200).json(result);
   } catch (error) {
     console.log(error.message);
