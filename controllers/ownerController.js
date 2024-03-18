@@ -487,7 +487,6 @@ export const dashboardReport = async (req, res) => {
     }
     let salesData = [];
     for (let i = 0; i < sales.length; i++) {
-      console.log(sales[i].total);
       salesData.push(sales[i].total);
     }
 

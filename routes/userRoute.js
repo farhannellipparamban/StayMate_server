@@ -21,6 +21,7 @@ import {
   roomBooking,
   verifyBooking,
 } from "../controllers/bookingController.js";
+import { applyCoupon, couponList } from "../controllers/couponController.js";
 
 const userRoute = express();
 
@@ -41,5 +42,7 @@ userRoute.post("/roomBooking", userTokenVerify, roomBooking);
 userRoute.post("/verifyPayment", userTokenVerify, verifyBooking);
 userRoute.get("/myBookings/:userId", userTokenVerify, myBookings);
 userRoute.post("/cancelBooking", userTokenVerify, cancelBooking);
+userRoute.get("/allCoupons", userTokenVerify, couponList);
+userRoute.post("/applyCoupon", userTokenVerify, applyCoupon);
 
 export default userRoute;

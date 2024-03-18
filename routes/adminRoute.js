@@ -13,6 +13,7 @@ import {
   userList,
   verifyRoomDetails,
 } from "../controllers/adminController.js";
+import { couponList, createCoupon, deleteCoupons, editCouponDetails, editCoupons } from "../controllers/couponController.js";
 
 adminRoute.post("/login", adminLogin);
 adminRoute.get("/userList", adminTokenVerify, userList);
@@ -24,5 +25,10 @@ adminRoute.get("/singleRoomDetails/:roomId",adminTokenVerify,singleRoomDetails)
 adminRoute.get("/roomAddRequest", adminTokenVerify, roomAddRequests);
 adminRoute.patch('/verifyRoom',adminTokenVerify,verifyRoomDetails)
 adminRoute.get("/report",adminTokenVerify,dashboardReport)
+adminRoute.post("/addCoupon",adminTokenVerify,createCoupon)
+adminRoute.get("/couponList",adminTokenVerify,couponList)
+adminRoute.get("/editCouponDetails/:couponId",adminTokenVerify,editCouponDetails)
+adminRoute.put("/editCoupon",adminTokenVerify,editCoupons)
+adminRoute.patch("/deleteCoupon/:couponId",adminTokenVerify,deleteCoupons)
 
 export default adminRoute;
