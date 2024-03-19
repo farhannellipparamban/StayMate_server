@@ -2,16 +2,8 @@ import Coupon from "../models/couponModel.js";
 
 export const createCoupon = async (req, res) => {
   try {
-    const {
-      code,
-      discountAmount,
-      maxUsers,
-      expiryDate,
-      discountType,
-      originalPrice,
-      finalPrice,
-      roomId,
-    } = req.body;
+    const { code, discountAmount, maxUsers, expiryDate, discountType, roomId } =
+      req.body;
 
     const existingCoupon = await Coupon.findOne({ code });
 
@@ -26,8 +18,6 @@ export const createCoupon = async (req, res) => {
       maxUsers,
       expiryDate,
       discountType,
-      originalPrice,
-      finalPrice,
       roomId,
     });
     res.status(201).json({ message: "Coupon Added Successfully" });
@@ -76,8 +66,6 @@ export const editCoupons = async (req, res) => {
       maxUsers,
       expiryDate,
       discountType,
-      originalPrice,
-      finalPrice,
     } = req.body;
 
     await Coupon.findByIdAndUpdate(
@@ -89,8 +77,6 @@ export const editCoupons = async (req, res) => {
           maxUsers,
           expiryDate,
           discountType,
-          originalPrice,
-          finalPrice,
         },
       }
     );
@@ -115,15 +101,27 @@ export const deleteCoupons = async (req, res) => {
 
 export const applyCoupon = async (req, res) => {
   try {
-    const { couponCode } = req.body;
+    const { couponCode,userId } = req.body;
 
     const coupon = await Coupon.findOne({ code: couponCode });
 
     if (!coupon) {
       return res.status(400).json({ message: "Coupon not found" });
     }
+    if (coupon.user.includes(userId)) {
+      return res
+        .status(400)
+        .json({ message: "You have already used this coupon" });
+    }
 
-   
+    if (coupon.maxUsers <= 0) {
+      return res.status(400).json({ message: "This coupon has been fully redeemed" });
+    }
+
+    coupon.user.push(userId);
+    coupon.maxUsers--; 
+    await coupon.save()
+
     return res.status(200).json({ message: "Coupon applied successfully" });
   } catch (error) {
     console.log(error.message);

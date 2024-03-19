@@ -21,6 +21,7 @@ const couponSchema = new mongoose.Schema({
   expiryDate: {
     type: Date,
     required: true,
+    expires: 0,
   },
   discountStatus: {
     type: Boolean,
@@ -30,12 +31,7 @@ const couponSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  originalPrice: {
-    type: Number,
-  },
-  finalPrice: {
-    type: Number,
-  },
+  
   user: {
     type: Array,
     ref: "user",
@@ -44,4 +40,7 @@ const couponSchema = new mongoose.Schema({
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
 });
+
+couponSchema.index({ expiryDate: 1 }, { expireAfterSeconds: 0 });
+
 export default mongoose.model("coupon", couponSchema);
