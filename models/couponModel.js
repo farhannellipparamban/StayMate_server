@@ -31,7 +31,14 @@ const couponSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  
+  minRoomRent: {
+    type: Number,
+    required:true,
+  },
+  maxDiscount: {
+    type: Number, 
+    required:true,
+  },
   user: {
     type: Array,
     ref: "user",

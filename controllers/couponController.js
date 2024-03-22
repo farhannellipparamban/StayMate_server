@@ -2,8 +2,16 @@ import Coupon from "../models/couponModel.js";
 
 export const createCoupon = async (req, res) => {
   try {
-    const { code, discountAmount, maxUsers, expiryDate, discountType, roomId } =
-      req.body;
+    const {
+      code,
+      discountAmount,
+      maxUsers,
+      expiryDate,
+      discountType,
+      roomId,
+      minRoomRent,
+      maxDiscount,
+    } = req.body;
 
     const existingCoupon = await Coupon.findOne({ code });
 
@@ -19,6 +27,8 @@ export const createCoupon = async (req, res) => {
       expiryDate,
       discountType,
       roomId,
+      minRoomRent,
+      maxDiscount,
     });
     res.status(201).json({ message: "Coupon Added Successfully" });
   } catch (error) {
@@ -66,6 +76,8 @@ export const editCoupons = async (req, res) => {
       maxUsers,
       expiryDate,
       discountType,
+      minRoomRent,
+      maxDiscount,
     } = req.body;
 
     await Coupon.findByIdAndUpdate(
@@ -77,6 +89,8 @@ export const editCoupons = async (req, res) => {
           maxUsers,
           expiryDate,
           discountType,
+          minRoomRent,
+          maxDiscount,
         },
       }
     );
@@ -101,7 +115,7 @@ export const deleteCoupons = async (req, res) => {
 
 export const applyCoupon = async (req, res) => {
   try {
-    const { couponCode,userId } = req.body;
+    const { couponCode, userId } = req.body;
 
     const coupon = await Coupon.findOne({ code: couponCode });
 
@@ -115,12 +129,14 @@ export const applyCoupon = async (req, res) => {
     }
 
     if (coupon.maxUsers <= 0) {
-      return res.status(400).json({ message: "This coupon has been fully redeemed" });
+      return res
+        .status(400)
+        .json({ message: "This coupon has been fully redeemed" });
     }
 
     coupon.user.push(userId);
-    coupon.maxUsers--; 
-    await coupon.save()
+    coupon.maxUsers--;
+    await coupon.save();
 
     return res.status(200).json({ message: "Coupon applied successfully" });
   } catch (error) {
