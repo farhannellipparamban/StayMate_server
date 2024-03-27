@@ -4,6 +4,7 @@ import Rooms from "../models/roomModel.js";
 import securePassword from "../utils/securePassword.js";
 import sendMailOtp from "../utils/nodeMailer.js";
 import Otp from "../models/otpModel.js";
+import Offer from "../models/offerModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
@@ -368,5 +369,17 @@ export const allRoomList = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const loadOffer = async (req, res) => {
+  try {
+    const offers = await Offer.find();
+    if (offers) {
+      res.status(200).json(offers);
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: "Internal Server Error" });
   }
 };

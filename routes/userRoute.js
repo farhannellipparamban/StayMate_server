@@ -6,6 +6,7 @@ import {
   emailOtpVerification,
   forgetPassword,
   getUserDetails,
+  loadOffer,
   loginVerification,
   resendOtp,
   resetPassword,
@@ -44,5 +45,6 @@ userRoute.get("/myBookings/:userId", userTokenVerify, myBookings);
 userRoute.post("/cancelBooking", userTokenVerify, cancelBooking);
 userRoute.get("/allCoupons", userTokenVerify, couponList);
 userRoute.post("/applyCoupon", userTokenVerify, applyCoupon);
+userRoute.get("/loadOffer", userTokenVerify, loadOffer);
 
 export default userRoute;

@@ -45,7 +45,7 @@ export const couponList = async (req, res) => {
     } else {
       return res
         .status(200)
-        .json({ message: "something happened with finding room data" });
+        .json({ message: "something happened with finding coupon data" });
     }
   } catch (error) {
     console.log(error.message);

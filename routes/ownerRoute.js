@@ -30,6 +30,7 @@ import {
   cancelRequests,
   changeBookingStatus,
 } from "../controllers/bookingController.js";
+import { addOffer, deleteOffers, editOfferDetails, editOffers, offerList } from "../controllers/offerController.js";
 
 ownerRoute.post("/signup", ownerRegister);
 ownerRoute.post("/otp", ownerEmailVerify);
@@ -53,5 +54,10 @@ ownerRoute.patch("/changeStatus", ownerTokenVerify, changeBookingStatus);
 ownerRoute.get("/cancelRequests/:ownerId", ownerTokenVerify, cancelRequests);
 ownerRoute.patch("/approveCancel", ownerTokenVerify, apporveCancelRequest);
 ownerRoute.get("/report/:ownerId",ownerTokenVerify,dashboardReport)
+ownerRoute.post("/addOffer",ownerTokenVerify,addOffer)
+ownerRoute.get("/offerList",ownerTokenVerify,offerList)
+ownerRoute.get("/editOfferDetails/:offerId",ownerTokenVerify,editOfferDetails)
+ownerRoute.put("/editOffer",ownerTokenVerify,editOffers)
+ownerRoute.patch("/deleteOffer/:offerId",ownerTokenVerify,deleteOffers)
 
 export default ownerRoute;

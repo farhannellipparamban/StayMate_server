@@ -6,6 +6,12 @@ const roomSchema = new mongoose.Schema({
     ref: "owner",
     required: true,
   },
+  // offers: [
+  //   {
+  //     type: mongoose.Types.ObjectId,
+  //     ref: "offer",
+  //   },
+  // ],
   roomName: {
     type: String,
     required: true,
