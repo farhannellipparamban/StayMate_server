@@ -2,6 +2,7 @@ import express from "express";
 import { userTokenVerify } from "../middleware/authVerify.js";
 import {
   HomeRoomListing,
+  addRoomsReview,
   allRoomList,
   emailOtpVerification,
   forgetPassword,
@@ -46,5 +47,6 @@ userRoute.post("/cancelBooking", userTokenVerify, cancelBooking);
 userRoute.get("/allCoupons", userTokenVerify, couponList);
 userRoute.post("/applyCoupon", userTokenVerify, applyCoupon);
 userRoute.get("/loadOffer", userTokenVerify, loadOffer);
+userRoute.put("/addRoomsReview",userTokenVerify,addRoomsReview)
 
 export default userRoute;

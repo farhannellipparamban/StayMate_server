@@ -188,7 +188,6 @@ export const verifyBooking = async (req, res) => {
 export const filteredRooms = async (req, res) => {
   try {
     const { chooseLocation, CheckInDate, CheckOutDate, Persons } = req.body;
-
     const availableRooms = await Rooms.aggregate([
       {
         $match: {
@@ -206,7 +205,8 @@ export const filteredRooms = async (req, res) => {
         },
       },
     ]);
-
+    // const availableRooms = await Rooms.find({})
+// console.log(availableRooms,"wijf");
     const filteredRooms = availableRooms.filter((room) => {
       const bookingDates = room.bookingDates;
       if (!bookingDates || bookingDates.length === 0) {

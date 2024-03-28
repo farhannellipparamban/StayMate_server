@@ -67,6 +67,18 @@ const roomSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  ratings: [
+    {
+      star: Number,
+      description: String,
+      postedBy: { type: mongoose.Types.ObjectId, ref: "user" },
+      postedDate: { type: Date },
+    },
+  ],
+  totalRating: {
+    type: String,
+    default: 0,
+  },
   bookingDates: [
     {
       startDate: {
