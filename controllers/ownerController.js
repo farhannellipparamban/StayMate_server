@@ -548,3 +548,17 @@ export const dashboardReport = async (req, res) => {
     res.status(500).json({ status: "Internal Server Error" });
   }
 };
+
+export const getAllReviews = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const roomData = await Rooms.findById(id).populate({
+      path: "ratings.postedBy",
+      select: "name",
+    });
+    res.status(200).json({ roomData });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: "Internal Server Error" });
+  }
+};

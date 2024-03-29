@@ -6,6 +6,7 @@ import {
   BlockCustomer,
   customersList,
   dashboardReport,
+  getAllReviews,
   ownerEmailVerify,
   ownerForgetPassword,
   ownerGoogleLogin,
@@ -59,5 +60,6 @@ ownerRoute.get("/offerList",ownerTokenVerify,offerList)
 ownerRoute.get("/editOfferDetails/:offerId",ownerTokenVerify,editOfferDetails)
 ownerRoute.put("/editOffer",ownerTokenVerify,editOffers)
 ownerRoute.patch("/deleteOffer/:offerId",ownerTokenVerify,deleteOffers)
+ownerRoute.get("/reviewsList/:id",ownerTokenVerify,getAllReviews)
 
 export default ownerRoute;

@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -384,41 +385,82 @@ export const loadOffer = async (req, res) => {
   }
 };
 
-export const addRoomsReview = async (req,res)=>{
+export const addRoomsReview = async (req, res) => {
   try {
-    const {roomId,userId,rating,review} = req.body
-    const roomData =  await Rooms.findById(roomId)
-    const alreadyRated = roomData.ratings.find((user)=>user.postedBy.toString()===userId.toString())
+    const { roomId, userId, rating, review } = req.body;
+    const roomData = await Rooms.findById(roomId);
+    const alreadyRated = roomData.ratings.find(
+      (user) => user.postedBy.toString() === userId.toString()
+    );
     if (alreadyRated) {
       await Rooms.updateOne(
-        {ratings:{$elemMatch:alreadyRated}},
+        { ratings: { $elemMatch: alreadyRated } },
         {
-          $set:{
-            "ratings.$.star":rating,
-            "ratings.$.description":review,
-            "ratings.$.postedDate":Date.now(),
+          $set: {
+            "ratings.$.star": rating,
+            "ratings.$.description": review,
+            "ratings.$.postedDate": Date.now(),
           },
-        },
-      )
-    }else{
-      await Rooms.findByIdAndUpdate(roomId,{
-        $push:{
-          ratings:{star:rating,description:review,postedBy:userId}
         }
-      })
+      );
+    } else {
+      await Rooms.findByIdAndUpdate(roomId, {
+        $push: {
+          ratings: { star: rating, description: review, postedBy: userId },
+        },
+      });
     }
 
-    const getAllRatings = await Rooms.findById(roomId)
-    const totalRating = getAllRatings.ratings.length
-    const ratingSum = getAllRatings.ratings.map((rating)=>rating.star).reduce((prev,curr)=>prev+curr,0)
+    const getAllRatings = await Rooms.findById(roomId);
+    const totalRating = getAllRatings.ratings.length;
+    const ratingSum = getAllRatings.ratings
+      .map((rating) => rating.star)
+      .reduce((prev, curr) => prev + curr, 0);
 
-    const actualRating = (ratingSum /totalRating).toFixed(1)
-    await Rooms.findByIdAndUpdate(roomId,{$set:{totalRating:actualRating}})
+    const actualRating = (ratingSum / totalRating).toFixed(1);
+    await Rooms.findByIdAndUpdate(roomId, {
+      $set: { totalRating: actualRating },
+    });
 
-    res.status(200).json({message:"Thank you so much.Your review has been recieved"})
-
+    res
+      .status(200)
+      .json({ message: "Thank you so much.Your review has been recieved" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({status:"Internal Server Error"})
+    res.status(500).json({ status: "Internal Server Error" });
   }
-}
+};
+
+export const reviewList = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const room = await Rooms.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      { $unwind: "$ratings" },
+      { $sort: { "ratings.postedDate": -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "ratings.postedBy",
+          foreignField: "_id",
+          as: "ratings.postedBy",
+        },
+      },
+      { $unwind: "$ratings.postedBy" },
+      {
+        $group: {
+          _id: "$_id",
+          ratings: { $push: "$ratings" },
+        },
+      },
+    ]);
+
+    const ratings = room.length > 0 ? room[0].ratings : [];
+
+    res.status(200).json(ratings);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: "Internal Server Error" });
+  }
+};

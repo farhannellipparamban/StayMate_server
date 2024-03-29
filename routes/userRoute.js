@@ -11,6 +11,7 @@ import {
   loginVerification,
   resendOtp,
   resetPassword,
+  reviewList,
   updateProfile,
   userGoogleLogin,
   userSignup,
@@ -48,5 +49,6 @@ userRoute.get("/allCoupons", userTokenVerify, couponList);
 userRoute.post("/applyCoupon", userTokenVerify, applyCoupon);
 userRoute.get("/loadOffer", userTokenVerify, loadOffer);
 userRoute.put("/addRoomsReview",userTokenVerify,addRoomsReview)
+userRoute.get("/reviewList/:id",userTokenVerify,reviewList)
 
 export default userRoute;
