@@ -1,11 +1,12 @@
-import Chat from "../models/chatModel";
-import User from "../models/userModel";
-import Owner from "../models/ownerModel";
+import Chat from "../models/chatModel.js";
+import User from "../models/userModel.js";
+import Owner from "../models/ownerModel.js";
 
 export const ownerData = async (req, res) => {
   try {
-    const { ownerId } = req.params;
-    const result = await Owner.findOne({ _id: ownerId });
+    const { id } = req.params;
+    const result = await Owner.findOne({ _id: id });
+    console.log(result,"owhvqih");
     res.status(200).json(result);
   } catch (error) {
     console.log(error.message);
@@ -15,8 +16,8 @@ export const ownerData = async (req, res) => {
 
 export const userData = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const result = await User.findOne({ _id: userId });
+    const { id } = req.params;
+    const result = await User.findOne({ _id: id });
     res.status(200).json(result);
   } catch (error) {
     console.log(error.message);
