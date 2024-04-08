@@ -14,7 +14,6 @@ function socketConnection(server) {
     socket.on("disconnect", () => {
       activeUsers = activeUsers.filter((user) => user.socketId !== socket.id);
       io.emit("get-users", activeUsers);
-      console.log(activeUsers,"hveiuwh");
     });
 
     socket.on("setup", (userId) => {
@@ -24,7 +23,6 @@ function socketConnection(server) {
           userId: userId,
           socketId: socket.id,
         });
-      console.log(activeUsers,"jhuih");
 
       }
       io.emit("get-users", activeUsers);

@@ -10,6 +10,9 @@ const messageSchema = new mongoose.Schema({
   text: {
     type: String,
   },
-});
+  audioPath: {
+    type: String, 
+  },
+},{timestamps:true});
 
 export default mongoose.model("message",messageSchema)

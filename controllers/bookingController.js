@@ -3,6 +3,7 @@ import Rooms from "../models/roomModel.js";
 import Bookings from "../models/bookingModel.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
+import chatModel from "../models/chatModel.js";
 // import Owner from "../models/ownerModel.js";
 
 export const checkRoomAvailability = async (req, res) => {
@@ -113,6 +114,15 @@ export const roomBooking = async (req, res) => {
         },
         { new: true }
       );
+      const chatExist = await chatModel.findOne({
+        members:{ $all :[userId.toString(), ownerId.toString()]}
+      });
+      if(!chatExist){
+        const newChat = new chatModel({
+          members: [userId.toString(), ownerId.toString()],
+        })
+        await newChat.save()
+      }
       res.status(200).json({
         message: "Your booking Successfully Completed",
         roomDetails,
@@ -136,6 +146,7 @@ export const roomBooking = async (req, res) => {
         }
         res.status(200).json({ bookingData: booking });
       });
+
     }
   } catch (error) {
     console.log(error.message);

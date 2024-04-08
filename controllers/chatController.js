@@ -5,8 +5,8 @@ import Owner from "../models/ownerModel.js";
 export const ownerData = async (req, res) => {
   try {
     const { id } = req.params;
+
     const result = await Owner.findOne({ _id: id });
-    console.log(result,"owhvqih");
     res.status(200).json(result);
   } catch (error) {
     console.log(error.message);
@@ -17,7 +17,9 @@ export const ownerData = async (req, res) => {
 export const userData = async (req, res) => {
   try {
     const { id } = req.params;
+
     const result = await User.findOne({ _id: id });
+
     res.status(200).json(result);
   } catch (error) {
     console.log(error.message);
@@ -29,39 +31,25 @@ export const userChats = async (req, res) => {
   try {
     const { userId } = req.params;
     const chats = await Chat.aggregate([
-      {
-        $match: { members: userId },
-      },
+      { $match: { members: userId } },
       {
         $lookup: {
-          from: "messages", // Replace with the actual name of your messages collection
-          let: { chatIdToString: { $toString: "$_id" } }, // Convert _id to string
+          from: "messages",
+          let: { chatIdToString: { $toString: "$_id" } },
           pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$chatId", "$$chatIdToString"] }, // Match on the converted chatId
-              },
-            },
-            {
-              $sort: { createdAt: -1 }, // Sort messages in descending order based on timestamp
-            },
-            {
-              $limit: 1, // Get only the latest message
-            },
+            { $match: { $expr: { $eq: ["$chatId", "$$chatIdToString"] } } },
+            { $sort: { createdAt: -1 } },
+            { $limit: 1 }
           ],
-          as: "messages",
-        },
+          as: "messages"
+        }
       },
       {
         $addFields: {
-          lastMessageTimeStamp: {
-            $ifNull: [{ $first: "$messages.createdAt" }, null],
-          },
-        },
+          lastMessageTimeStamp: { $ifNull: [{ $first: "$messages.createdAt" }, null] }
+        }
       },
-      {
-        $sort: { lastMessageTimeStamp: -1 }, // Sort chats based on the latest message timestamp
-      },
+      { $sort: { lastMessageTimeStamp: -1 } },
     ]);
 
     res.status(200).json(chats);
