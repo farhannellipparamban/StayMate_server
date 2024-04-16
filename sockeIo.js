@@ -10,7 +10,6 @@ function socketConnection(server) {
 
   io.on("connection", (socket) => {
     let activeUsers = [];
-
     socket.on("disconnect", () => {
       activeUsers = activeUsers.filter((user) => user.socketId !== socket.id);
       io.emit("get-users", activeUsers);
@@ -31,7 +30,7 @@ function socketConnection(server) {
     });
 
     socket.on("send_message", (data) => {
-      console.log(data, "message");
+      // console.log(data, "message");
       socket.to(123).emit("recieve_message", data);
     });
   });
